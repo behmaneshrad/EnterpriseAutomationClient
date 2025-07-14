@@ -1,3 +1,5 @@
+import "@/app/globals.css";
+
 export default function Dashboard() {
   return (
     <main className="p-10">

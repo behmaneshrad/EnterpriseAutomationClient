@@ -1,3 +1,5 @@
+import "@/app/globals.css";
+
 export default function NewRequest() {
   return (
     <main className="p-10">
