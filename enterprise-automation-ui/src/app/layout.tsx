@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Enterprise Automation UI",
-  description: "Your enterprise automation hub.",
+  description: "enterprise automation hub.",
 };
 
 export default function RootLayout({
