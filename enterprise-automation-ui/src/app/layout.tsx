@@ -3,6 +3,7 @@ import "./globals.css";
 import React from "react";
 import { Provider } from "jotai";
 import { SessionProvider } from "next-auth/react";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body>
+        <Header/>
         <SessionProvider>
           <Provider>{children}</Provider>
         </SessionProvider>
