@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import React from 'react';
+import React from "react";
+import { Provider } from "jotai";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,9 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa">
+    <html lang="fa" dir="rtl">
       <body>
-          {children}
+        <SessionProvider>
+          <Provider>{children}</Provider>
+        </SessionProvider>
       </body>
     </html>
   );
