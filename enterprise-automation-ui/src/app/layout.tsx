@@ -1,11 +1,16 @@
 import "./globals.css";
-import AuthProvider from "@/components/SessionProvider";
+
+
+export const metadata = {
+  title: "Enterprise Automation UI",
+  description: "enterprise automation hub.",
+},
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   );
