@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import { useAtom } from "jotai";
 import { sessionAtom, accessTokenAtom, authStatusAtom } from "@/state/auth";
 import { useSession } from "next-auth/react";
 
-const useAuth = () => {
+export function useAuth () {
     const {data: session, status} = useSession();
 
     const [authSession, setAuthSession] = useAtom(sessionAtom);
@@ -22,6 +22,4 @@ const useAuth = () => {
         accessToken,
     };
 }
-
-export default useAuth
 
