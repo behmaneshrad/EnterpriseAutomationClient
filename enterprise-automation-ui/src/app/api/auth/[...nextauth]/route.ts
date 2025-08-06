@@ -6,28 +6,19 @@ const handler = NextAuth({
       id: "keycloak",
       name: "keycloak",
       type: "oauth",
-      wellKnown:
-        "http://localhost:8080/realms/EnterpriseRealm/.well-known/openid-configuration",
-      clientId: "enterprise-api",
-      clientSecret: "Xz7pK93@vGmLwq!eD4Rt#2Fh",
+      wellKnown: process.env.KEYCLOAK_WELLKNOWN_URL,
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.preferred_username,
           email: profile.email,
-          role: profile.realm_access.roles[0],
+          role: profile.realm_access?.roles?.[0] || 'user', // اضافه کردن یک مقدار پیش‌فرض
         };
       },
     },
   ],
-  profile(profile) {
-    return {
-         id: profile.sub, // Subject unique to the user
-        name: profile.preferred_username, // Get username from claims
-        email: profile.email,  // Get email from claims
-        role: profile.realm_access.roles[0], // Get role from claims
-    };
-  },
   callbacks: {
     async jwt({ token, account, user }) {
       if (account) {
@@ -37,17 +28,26 @@ const handler = NextAuth({
       }
       if (user) {
         token.role = user.role;
+        // اطلاعات user را به توکن اضافه می‌کنیم تا در session callback در دسترس باشد
+        token.user = {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
       }
       return token;
     },
     async session({ session, token }) {
+      // این بخش اطلاعات را از توکن به شیء session منتقل می‌کند
       if (token) {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
         session.idToken = token.idToken;
-        if (session.user) {
-          session.user.role = token.role;
-        }
+        session.user = {
+          ...session.user,
+          ...token.user, // اطلاعات کاربر را از توکن به سشن اضافه می‌کنیم
+          role: token.role,
+        };
       }
       return session;
     },
