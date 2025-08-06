@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import React from "react";
-import Providers from "@/components/providers";
+import AppWrapper from "@/components/appWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <Providers>{children}</Providers>
+        <AppWrapper>
+          {children}
+          </AppWrapper>
       </body>
     </html>
   );
