@@ -1,22 +1,53 @@
-import KeycloakProvider from "next-auth/providers/keycloak";
 import { NextAuthOptions } from "next-auth";
+
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID!,
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET!,
-      issuer: process.env.KEYCLOAK_ISSUER!,
-      authorization: {
-          params: {
-             scope: "openid",
-           },
-         },
-    
-    }),
+    {
+      id: "keycloak",
+      name: "keycloak",
+      type: "oauth",
+      wellKnown: process.env.KEYCLOAK_WELLKNOWN_URL,
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.preferred_username,
+          email: profile.email,
+          role: profile.realm_access?.roles?.[0] || "user",
+        };
+      },
+    },
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/login",
+  callbacks: {
+    async jwt({ token, account, user }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.idToken = account.id_token;
+      }
+      if (user) {
+        token.role = user.role;
+        token.user = {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        session.idToken = token.idToken;
+        session.user = {
+          ...session.user,
+          ...token.user,
+        };
+      }
+      return session;
+    },
   },
 };
