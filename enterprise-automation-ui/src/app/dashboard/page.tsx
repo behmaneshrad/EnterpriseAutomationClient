@@ -1,18 +1,18 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/login");
+    return <div>لطفا ابتدا وارد شوید.</div>;
   }
 
   return (
-    <div className="p-8 flex justify-between mx-8 mt-4">
-      
-      <p className="mt-2 text-blue-400"> {session.user?.name || "فائزه وحدت"} </p>
-      <h1 className="text-xl text-blue-400 font-bold">داشبورد</h1>
+    <div className="p-8">
+      <h1 className="text-4xl font-bold mb-4">به داشبورد خوش آمدید.</h1>
+      <p>نام کاربری شما: {session.user?.name}</p>
+      <p>نقش شما: {session.user?.role}</p>
     </div>
   );
 }
