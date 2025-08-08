@@ -24,19 +24,19 @@ const RequestForm = () => {
   };
   return (
     <form
-      onSubmit={handleSubmit(onsubmit)}
+      onSubmit={handleSubmit(onSubmit)}
       className="max-w-xl mx-auto p-8 rounded-lg shadow-xl bg-gray-100 dark:bg-gray-800"
     >
       <div className="mb-6">
         <label
-          htmlFor="tilte"
+          htmlFor="title"
           className="block text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           عنوان درخواست
         </label>
         <input
           type="text"
-          id="text"
+          id="title"
           {...register("title")}
           className="mt-l block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
