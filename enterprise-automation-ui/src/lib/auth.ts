@@ -1,6 +1,5 @@
 import { NextAuthOptions } from "next-auth";
 
-
 export const authOptions: NextAuthOptions = {
   providers: [
     {
@@ -42,10 +41,18 @@ export const authOptions: NextAuthOptions = {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
         session.idToken = token.idToken;
-        session.user = {
-          ...session.user,
-          ...token.user,
-        };
+
+        if (session.user) {
+          session.user.name = token.user?.name;
+          session.user.email = token.user?.email;
+          session.user.role = token.role;
+        } else {
+          session.user = {
+            name: token.user?.name,
+            email: token.user?.email,
+            role: token.role,
+          };
+        }
       }
       return session;
     },
