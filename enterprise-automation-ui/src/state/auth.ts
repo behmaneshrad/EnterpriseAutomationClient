@@ -13,4 +13,4 @@ export const accessTokenAtom = atom<string | undefined>((get) => {
 
 
 // Atom for maintaining authentication status
-export const authStatusAtom = atom<'Loading' | 'authenticated' | 'unauthenticated'>('Loading');
+export const authStatusAtom = atom<'loading' | 'authenticated' | 'unauthenticated'>('loading');
