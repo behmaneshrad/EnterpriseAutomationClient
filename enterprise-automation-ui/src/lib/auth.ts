@@ -43,11 +43,13 @@ export const authOptions: NextAuthOptions = {
         session.idToken = token.idToken;
 
         if (session.user) {
+          session.user.id = token.sub as string;  
           session.user.name = token.user?.name;
           session.user.email = token.user?.email;
           session.user.role = token.role;
         } else {
           session.user = {
+            id: token.sub as string,
             name: token.user?.name,
             email: token.user?.email,
             role: token.role,
