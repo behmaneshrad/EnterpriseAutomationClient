@@ -38,7 +38,7 @@ const Header = () => {
                 </div>
             )}
                 {/* نمایش لینک ورود برای کاربران مهمان */}
-            {status === "unautheticated" && (
+            {status === "unauthenticated" && (
                 <Link href="/login" className="bg-blue-800 hover:bg-blue-900 text-white py-2 px-4 rounded-lg transition-colors duration-200">
                 ورود
                 </Link>
