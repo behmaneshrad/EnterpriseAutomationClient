@@ -11,9 +11,9 @@ const Header = () => {
   console.log("Session:", session);
   console.log("Status:", status);
     return (
-      <header className="p-4 bg-blue-600 text-white flex justify-between items-center">
+      <header className="p-4 bg-gray-200 text-gray-900 flex justify-between items-center">
         <Link href="/">
-        <span className="text-xl font-bold cursor-pointer hover:text-blue-200">Enterprise Automation</span>
+        <span className="text-xl font-bold cursor-pointer hover:text-gray-700 pr-24">اتوماسیون اداری</span>
         </Link>
 
         <nav>
@@ -27,25 +27,29 @@ const Header = () => {
                     <span className="text-sm">
                         {session.user?.name} ({session.user?.role})
                     </span>
-                    {/* لینک به صفحه پروفایل */}
-                    <Link href="/profile" className="hover:text-blue-200">
-                    پروفایل من
-                    </Link>
                     {/* دکمه خروج */}
                     <button onClick={() => signOut()} className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition-colors- duration-200">
                         خروج
                     </button>
                 </div>
             )}
-                {/* نمایش لینک ورود برای کاربران مهمان */}
-            {status === "unauthenticated" && (
-                <Link href="/login" className="bg-blue-800 hover:bg-blue-900 text-white py-2 px-4 rounded-lg transition-colors duration-200">
-                ورود
-                </Link>
-            )}
+           
         </nav>
       </header>
     );
 };
 
 export default Header;
+
+
+{/* اطلاعات کاربر */}
+<div className="flex justify-end items-center space-x-4">
+<span className="text-sm text-gray-600">سمیه بیکی</span>
+<span className="text-sm text-gray-500">سمت: مدیر</span>
+{/* آیکون‌ها */}
+<div className="flex space-x-2">
+  <button>🔔</button>
+  <button>⚙️</button>
+  <button>🚪</button>
+</div>
+</div>
