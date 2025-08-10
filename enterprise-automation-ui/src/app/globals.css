@@ -14,13 +14,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #e5e5e5;
     --foreground: #ededed;
   }
+}
+@font-face {
+  font-family: "BYekan";
+  src: url("/fonts/BYekan.ttf") format("ttf");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "BYekan", Arial, Helvetica, sans-serif;
 }
