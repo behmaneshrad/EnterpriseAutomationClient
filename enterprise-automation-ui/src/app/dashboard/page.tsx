@@ -1,5 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { StatusCard } from "@/components/StatusCard";
+import { ActionButton } from "@/components/ActionButton";
+import Sidebar from "@/components/Sidebar";
+
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -8,11 +13,33 @@ export default async function DashboardPage() {
     return <div>لطفا ابتدا وارد شوید.</div>;
   }
 
+  const role = session.user.role;
+
+  if (role === "employee") {
+    redirect("/dashboard/employee");
+  }
+
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold mb-4">به داشبورد خوش آمدید.</h1>
-      <p>نام کاربری شما: {session.user?.name}</p>
-      <p>نقش شما: {session.user?.role}</p>
+    <div className="flex h-screen bg-gray-50">
+      {/* نوار وظیفه سمت راست */}
+      <Sidebar />
+
+      {/* محتوای اصلی */}
+      <main className="flex-1 py-6 space-y-6 overflow-y-auto pr-24 pl-8">
+        {/* وضعیت درخواست‌ها */}
+        <div className="grid grid-cols-3 gap-4">
+          <StatusCard title="درخواست رد شده" count={3} color="red" />
+          <StatusCard title="درخواست در حال بررسی" count={3} color="yellow" />
+          <StatusCard title="درخواست تایید شده" count={3} color="green" />
+        </div>
+
+        {/* دکمه‌ها */}
+        <div className="grid grid-cols-3 gap-4">
+          <ActionButton label="بررسی درخواست ها" />
+          <ActionButton label="ثبت درخواست جدید" />
+          <ActionButton label="مشاهده درخواست ها" />
+        </div>
+      </main>
     </div>
   );
 }
