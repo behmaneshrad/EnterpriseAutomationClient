@@ -2,26 +2,62 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import {
   requestFormSchema,
   RequestFormSchema,
 } from "@/schemas/requestFormSchema";
-import React from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import React, {useState} from "react";
 
 const RequestForm = () => {
+    const {data: session} = useSession();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<RequestFormSchema>({
     resolver: zodResolver(requestFormSchema),
   });
 
-  const onSubmit = (data: RequestFormSchema) => {
-    // این تابع پس از اعتبارسنجی موفق اجرا میشود
-    console.log(data);
-    // کد ارسال درخواست به سرور
+  const onSubmit = async (data: RequestFormSchema) => {
+    // بررسی وجود توکن
+    if (!session?.accessToken) {
+        setSubmitMessage('خطا توکن دسترسی وجود ندارد لطفا مجددا وارد شوید')
+        return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+        const response = await fetch("http:localhost:5000/api/requests/submit", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            toast.success('درخواست با موفقیت ارسال شد!');
+            reset();
+            router.push('/request')
+        } else {
+            const errorData = await response.json();
+            toast.error(`خطا ارسال درخواست: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        toast.error('خطا در اتصال به سرور. لطفا دوباره امتحان کنید.');
+    } finally {
+        setIsSubmitting(false);
+    }
   };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -69,8 +105,9 @@ const RequestForm = () => {
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        disabled={isSubmitting}
         >
-          ارسال درخواست
+           {isSubmitting ? 'ارسال درخواست':'در حال ارسال...'}
         </button>
       </div>
     </form>
