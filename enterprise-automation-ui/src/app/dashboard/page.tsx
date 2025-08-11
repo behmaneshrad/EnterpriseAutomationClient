@@ -28,16 +28,16 @@ export default async function DashboardPage() {
       <main className="flex-1 py-6 space-y-6 overflow-y-auto pr-24 pl-8">
         {/* وضعیت درخواست‌ها */}
         <div className="grid grid-cols-3 gap-4">
-          <StatusCard title="درخواست رد شده" count={3} color="red" />
+          <StatusCard title="درخواست رد شده" count={2} color="red" />
           <StatusCard title="درخواست در حال بررسی" count={3} color="yellow" />
-          <StatusCard title="درخواست تایید شده" count={3} color="green" />
+          <StatusCard title="درخواست تایید شده" count={10} color="green" />
         </div>
 
         {/* دکمه‌ها */}
         <div className="grid grid-cols-3 gap-4">
-          <ActionButton label="بررسی درخواست ها" />
-          <ActionButton label="ثبت درخواست جدید" />
-          <ActionButton label="مشاهده درخواست ها" />
+          <ActionButton label="بررسی درخواست ها"  href="/requests" />
+          <ActionButton label="ثبت درخواست جدید"  href="/requests" />
+          <ActionButton label="مشاهده درخواست ها" href="/requests" />
         </div>
       </main>
     </div>
