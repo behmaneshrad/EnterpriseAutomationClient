@@ -74,7 +74,7 @@ const RequestForm = () => {
           type="text"
           id="title"
           {...register("title")}
-          className="mt-l block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
         {errors.title && (
           <p className="mt-2 text-sm text-red-600">{errors.title.message}</p>
@@ -92,7 +92,7 @@ const RequestForm = () => {
           id="description"
           rows={4}
           {...register("description")}
-          className="mt-1 block w-full text-red-600"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
         {errors.description && (
           <p className="mt-2 text-sm text-red-600">
@@ -107,7 +107,7 @@ const RequestForm = () => {
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         disabled={isSubmitting}
         >
-           {isSubmitting ? 'ارسال درخواست':'در حال ارسال...'}
+           {isSubmitting ? 'ارسال درخواست' : 'در حال ارسال...'}
         </button>
       </div>
     </form>
