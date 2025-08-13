@@ -9,10 +9,10 @@ const RoleLoader = () => {
   const { setRole } = useRole();
 
   useEffect(() => {
-    if (session?.user?.role) {
-      setRole(session.user.role);
+    if (session?.user?.roles?.length) {
+      setRole(session.user.roles[0]);
     }
-  }, [session]);
+  }, [session, setRole]);
 
   return null;
 };
