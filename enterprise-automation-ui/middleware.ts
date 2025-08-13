@@ -10,31 +10,35 @@ export default withAuth(
     const isLoginPage = pathname.startsWith("/login");
     const isAuthenticated = !!token;
 
-    // ✅ اگر کاربر وارد شده باشد و در صفحه لاگین باشد او را به صفحه اصلی هدایت میکند
+    // اگر کاربر وارد شده و در صفحه لاگین است → هدایت به صفحه اصلی
     if (isLoginPage && isAuthenticated) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // ✅ اگر کاربر لاگین نکرده باشد به صورت خودکار به صفحه لاگین میرود
+    // اگر کاربر لاگین نکرده باشد → هدایت به لاگین
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // ✅ بررسی نقش و مسیر مجاز
-    const userRole = token?.user?.role;
+    // گرفتن نقش‌ها از توکن
+    const userRoles = token?.roles as string[] | undefined;
+    const primaryRole = userRoles?.[0]; // نقش اصلی (اولین نقش آرایه)
 
-    if (!userRole || !(userRole in roleAccessMap)) {
+    if (!primaryRole || !(primaryRole in roleAccessMap)) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    const allowedPaths = roleAccessMap[userRole];
-    const isAllowed = allowedPaths.some(path => pathname.startsWith(path));
+    // بررسی مسیرهای مجاز برای نقش
+    const allowedPaths = roleAccessMap[primaryRole];
+    const isAllowed = allowedPaths.some((path) =>
+      pathname.startsWith(path)
+    );
 
     if (!isAllowed) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    // ✅ اگر همه چیز اوکی بود، ادامه بده
+    //  ادامه مسیر
     return NextResponse.next();
   },
   {
