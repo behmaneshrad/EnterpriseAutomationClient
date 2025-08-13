@@ -5,7 +5,6 @@ import { StatusCard } from "@/components/StatusCard";
 import { ActionButton } from "@/components/ActionButton";
 import Sidebar from "@/components/Sidebar";
 
-
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
@@ -13,9 +12,11 @@ export default async function DashboardPage() {
     return <div>لطفا ابتدا وارد شوید.</div>;
   }
 
-  const role = session.user.role;
+  // مطمئن می‌شویم roles همیشه آرایه است
+  const roles: string[] = session.user?.roles || [];
 
-  if (role === "employee") {
+  // اگر نقش کارمند دارد، هدایت به داشبورد مخصوص کارمند
+  if (roles.includes("employee")) {
     redirect("/dashboard/employee");
   }
 
@@ -35,8 +36,8 @@ export default async function DashboardPage() {
 
         {/* دکمه‌ها */}
         <div className="grid grid-cols-3 gap-4">
-          <ActionButton label="بررسی درخواست ها"  href="/request/[id]" />
-          <ActionButton label="ثبت درخواست جدید"  href="/request/new" />
+          <ActionButton label="بررسی درخواست ها" href="/request/[id]" />
+          <ActionButton label="ثبت درخواست جدید" href="/request/new" />
           <ActionButton label="مشاهده درخواست ها" href="/request" />
         </div>
       </main>
