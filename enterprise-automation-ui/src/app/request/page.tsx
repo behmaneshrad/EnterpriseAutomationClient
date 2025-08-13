@@ -1,6 +1,6 @@
-import RequestTable from "@/components/RequestTable";
+import RequestTable, { Request } from "@/components/RequestTable";
 
-const requests = [
+const requests: Request[] = [
   { id: 1, type: "خرید تجهیزات", statusIcon: "pending", description: "در حال بررسی" },
   { id: 2, type: "خرید تجهیزات", statusIcon: "approved", description: "در حال بررسی" },
   { id: 3, type: "خرید تجهیزات", statusIcon: "rejected", description: "در حال بررسی" },

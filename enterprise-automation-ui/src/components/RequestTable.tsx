@@ -1,6 +1,6 @@
 import React from "react";
 
-interface Request {
+export interface Request {
   id: number;
   type: string;
   statusIcon: "pending" | "approved" | "rejected";
