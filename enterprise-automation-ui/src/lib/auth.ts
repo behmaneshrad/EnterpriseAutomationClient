@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
       profile(profile) {
         return {
           id: profile.sub,
-          name: profile.preferred_username,
+          name: profile.name || profile.preferred_username,
           email: profile.email,
           role: profile.realm_access?.roles?.[0] || "user",
         };

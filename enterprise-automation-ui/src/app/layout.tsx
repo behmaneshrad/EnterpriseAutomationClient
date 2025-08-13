@@ -2,8 +2,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import React from "react";
 import AppWrapper from "@/components/appWrapper";
+import {Vazirmatn} from 'next/font/google'
 
-const inter = Inter({ subsets: ["latin"] });
+const vazirmatn = Vazirmatn({
+  subsets:['arabic'],
+  weight:['400', '700'],
+})
 
 export const metadata = {
   title: "Enterprise Automation UI",
@@ -17,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" className="bg-gray-50">
-      <body>
+      <body className={vazirmatn.className}>
         <AppWrapper>
           {children}
           </AppWrapper>
