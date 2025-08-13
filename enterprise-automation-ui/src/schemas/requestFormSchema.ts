@@ -9,6 +9,7 @@ export const requestFormSchema = z.object({
     .string()
     .min(20, {message: 'شرح باید حداقل ۲۰ کاراکتر داشته باشد.'})
     .max(500, {message: 'شرح نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.'}),
+    workflowId: z.string().min(1, "انتخاب فرایند الزامی است")
 });
 
 export type RequestFormSchema = z.infer<typeof requestFormSchema>;
