@@ -2,11 +2,12 @@ import RequestTable, { Request } from "@/components/RequestTable";
 import Sidebar from "@/components/Sidebar";
 
 const requests: Request[] = [
-  { RequestId: 1, Title: "خرید مودم ", CurrentStatus: "pending", Description: "در حال بررسی" },
-  { RequestId: 2, Title: "خرید تجهیزات", CurrentStatus: "approved", Description: "در حال بررسی" },
-  { RequestId: 3, Title: "خرید  لپ تاپ ", CurrentStatus: "rejected", Description: "در حال بررسی" },
-  { RequestId: 4, Title: "مرخصی  ", CurrentStatus: "approved", Description: "در حال بررسی" },
+  { id: 1, type: "خرید مودم ", statusIcon: "pending", description: "در حال بررسی" },
+  { id: 2, type: "خرید تجهیزات", statusIcon: "approved", description: "در حال بررسی" },
+  { id: 3, type: "خرید  لپ تاپ ", statusIcon: "rejected", description: "در حال بررسی" },
+  { id: 4, type: "مرخصی  ", statusIcon: "approved", description: "در حال بررسی" },
 ];
+
 
 export default function Page() {
   return (
