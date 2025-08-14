@@ -27,7 +27,7 @@ const Header = () => {
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
             {/* نمایش نام و نقش کاربر */}
             <span className="text-sm">
-              {user?.name} | {user?.email} ({user?.role})
+              {user?.name} | {user?.email} ({user?.roles?.[0]})
             </span>
             {/* لینک به صفحه پروفایل */}
             <Link href="/profile" className="hover:text-blue-200">
