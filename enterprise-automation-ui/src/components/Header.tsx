@@ -9,7 +9,7 @@ const Header = () => {
   const user = session?.user;
 
   return (
-    <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <header className="bg-gray-50 text-gray-900 p-4 flex justify-between items-center">
       <Link href="/" className="text-xl font-bold cursor-pointer hover:text-blue-200 pr-24">
         اتوماسیون اداری
       </Link>
@@ -24,15 +24,16 @@ const Header = () => {
               {user.name} | {user.email} ({user.roles?.join(", ")})
             </span>
 
-            {/* لینک پروفایل */}
+            {/* لینک پروفایل
             <Link href="/profile" className="hover:text-blue-200">
               پروفایل من
             </Link>
+             */}
 
             {/* خروج */}
             <button
               onClick={() => signOut()}
-              className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition-colors duration-200"
+              className="bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded-lg transition-colors duration-200 mx-8"
             >
               خروج
             </button>
