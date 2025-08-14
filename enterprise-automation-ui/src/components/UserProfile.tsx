@@ -33,7 +33,7 @@ const UserProfile = () => {
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">نقش:</span>
-            <span className="text-gray-900">{user?.role}</span>
+            <span className="text-gray-900 dark:text-white">{user?.roles?.[0]}</span>
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">ایمیل:</span>
