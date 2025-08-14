@@ -1,42 +1,66 @@
-"use client"
+"use client";
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export interface Request {
-  id: number;
-  type: string;
-  statusIcon: "pending" | "approved" | "rejected";
-  description: string;
+  RequestId: number;
+  Title: string;
+  CurrentStatus: "pending" | "approved" | "rejected";
+  Description: string;
 }
 
 interface Props {
   data: Request[];
 }
 
-const getStatusIcon = (status: Request["statusIcon"]) => {
+const getStatusIcon = (status: Request["CurrentStatus"]) => {
   const baseClass = "w-5 h-5 inline-block";
   switch (status) {
     case "approved":
-      return <img src="/icons/tick-square.svg" alt="تأیید شده" className={baseClass} />;
+      return (
+        <Image
+          src="/icons/tick-square.svg"
+          alt="تأیید شده"
+          className={baseClass}
+        />
+      );
     case "rejected":
-      return <img src="/icons/close-square.svg" alt="رد شده" className={baseClass} />;
+      return (
+        <Image
+          src="/icons/close-square.svg"
+          alt="رد شده"
+          className={baseClass}
+        />
+      );
     default:
-      return <img src="/icons/minus-square.svg" alt="در حال بررسی" className={baseClass} />;
+      return (
+        <Image
+          src="/icons/minus-square.svg"
+          alt="در حال بررسی"
+          className={baseClass}
+        />
+      );
   }
 };
 
 const RequestTable: React.FC<Props> = ({ data }) => {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"" | "pending" | "approved" | "rejected">("");
+  const [statusFilter, setStatusFilter] = useState<
+    "" | "pending" | "approved" | "rejected"
+  >("");
 
   // داده‌های فیلتر شده
   const filteredData = useMemo(() => {
     return data.filter((req) => {
       const matchesSearch =
-        req.type.toLowerCase().includes(search.toLowerCase()) ||
-        req.description.toLowerCase().includes(search.toLowerCase()) ||
-        req.id.toString().includes(search);
+        req.Title.toLowerCase().includes(search.toLowerCase()) ||
+        req.Description.toLowerCase().includes(search.toLowerCase()) ||
+        req.RequestId.toString().includes(search);
 
-      const matchesStatus = statusFilter ? req.statusIcon === statusFilter : true;
+      const matchesStatus = statusFilter
+        ? req.CurrentStatus === statusFilter
+        : true;
 
       return matchesSearch && matchesStatus;
     });
@@ -81,15 +105,17 @@ const RequestTable: React.FC<Props> = ({ data }) => {
           <tbody>
             {filteredData.map((req) => (
               <tr
-                key={req.id}
+                key={req.RequestId}
                 className="border-y-4 border-gray-50 hover:bg-gray-100 text-gray-700"
               >
-                <td className="px-4 py-2">{req.id}</td>
-                <td className="px-4 py-2">{req.type}</td>
-                <td className="px-4 py-2">{getStatusIcon(req.statusIcon)}</td>
-                <td className="px-4 py-2">{req.description}</td>
+                <td className="px-4 py-2">{req.RequestId}</td>
+                <td className="px-4 py-2">{req.Title}</td>
+                <td className="px-4 py-2">
+                  {getStatusIcon(req.CurrentStatus)}
+                </td>
+                <td className="px-4 py-2">{req.Description}</td>
                 <td className="px-4 py-2 text-center">
-                  <img
+                  <Image
                     src="/icons/eye.svg"
                     alt="مشاهده"
                     className="w-5 h-5 cursor-pointer"
