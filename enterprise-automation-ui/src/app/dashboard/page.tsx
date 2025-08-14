@@ -36,7 +36,7 @@ export default async function DashboardPage() {
 
         {/* دکمه‌ها */}
         <div className="grid grid-cols-3 gap-4">
-          <ActionButton label="بررسی درخواست ها" href="/request/[id]" />
+          <ActionButton label="بررسی درخواست ها" href="/request/[id]" id="1" />
           <ActionButton label="ثبت درخواست جدید" href="/request/new" />
           <ActionButton label="مشاهده درخواست ها" href="/request" />
         </div>

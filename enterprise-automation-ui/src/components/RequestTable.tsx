@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useState, useMemo } from "react";
 
 export interface Request {
   id: number;
@@ -24,32 +25,81 @@ const getStatusIcon = (status: Request["statusIcon"]) => {
 };
 
 const RequestTable: React.FC<Props> = ({ data }) => {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"" | "pending" | "approved" | "rejected">("");
+
+  // داده‌های فیلتر شده
+  const filteredData = useMemo(() => {
+    return data.filter((req) => {
+      const matchesSearch =
+        req.type.toLowerCase().includes(search.toLowerCase()) ||
+        req.description.toLowerCase().includes(search.toLowerCase()) ||
+        req.id.toString().includes(search);
+
+      const matchesStatus = statusFilter ? req.statusIcon === statusFilter : true;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [data, search, statusFilter]);
+
   return (
-    <div className="overflow-x-auto border border-gray-300 rounded-lg">
-      <table className="min-w-full text-sm text-right">
-        <thead className="bg-gray-100 text-gray-700">
-          <tr>
-            <th className="px-4 py-2">شماره درخواست</th>
-            <th className="px-4 py-2">نوع درخواست</th>
-            <th className="px-4 py-2">وضعیت</th>
-            <th className="px-4 py-2">توضیحات</th>
-            <th className="px-4 py-2">مشاهده</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((req) => (
-            <tr key={req.id} className="border-y-4 border-gray-50 hover:bg-gray-50 text-gray-700">
-              <td className="px-4 py-2">{req.id}</td>
-              <td className="px-4 py-2">{req.type}</td>
-              <td className="px-4 py-2">{getStatusIcon(req.statusIcon)}</td>
-              <td className="px-4 py-2">{req.description}</td>
-              <td className="px-4 py-2 text-center">
-                <img src="/icons/eye.svg" alt="مشاهده" className="w-5 h-5 cursor-pointer" />
-              </td>
+    <div>
+      {/* بخش جستجو و فیلتر */}
+      <div className="flex gap-4 mb-4 text-gray-900">
+        <input
+          type="text"
+          placeholder="جستجو..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 flex-1"
+        />
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          className="border border-gray-300 rounded px-2 py-1"
+        >
+          <option value="">همه وضعیت‌ها</option>
+          <option value="pending">در حال بررسی</option>
+          <option value="approved">تأیید شده</option>
+          <option value="rejected">رد شده</option>
+        </select>
+      </div>
+
+      {/* جدول */}
+      <div className="overflow-x-auto border border-gray-300 rounded-lg">
+        <table className="min-w-full text-sm text-right">
+          <thead className="bg-gray-100 text-gray-700">
+            <tr>
+              <th className="px-4 py-2">شماره درخواست</th>
+              <th className="px-4 py-2">نوع درخواست</th>
+              <th className="px-4 py-2">وضعیت</th>
+              <th className="px-4 py-2">توضیحات</th>
+              <th className="px-4 py-2">مشاهده</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredData.map((req) => (
+              <tr
+                key={req.id}
+                className="border-y-4 border-gray-50 hover:bg-gray-100 text-gray-700"
+              >
+                <td className="px-4 py-2">{req.id}</td>
+                <td className="px-4 py-2">{req.type}</td>
+                <td className="px-4 py-2">{getStatusIcon(req.statusIcon)}</td>
+                <td className="px-4 py-2">{req.description}</td>
+                <td className="px-4 py-2 text-center">
+                  <img
+                    src="/icons/eye.svg"
+                    alt="مشاهده"
+                    className="w-5 h-5 cursor-pointer"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
