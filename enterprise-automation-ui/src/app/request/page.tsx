@@ -1,4 +1,5 @@
 import RequestTable, { Request } from "@/components/RequestTable";
+import Sidebar from "@/components/Sidebar";
 
 const requests: Request[] = [
   { id: 1, type: "خرید مودم ", statusIcon: "pending", description: "در حال بررسی" },
@@ -8,5 +9,14 @@ const requests: Request[] = [
 ];
 
 export default function Page() {
-  return <RequestTable data={requests} />;
+  return (
+    <div className="flex h-screen bg-gray-50">
+       <Sidebar />
+
+       <main className="flex-1 py-6 space-y-6 overflow-y-auto pr-24 pl-8">
+        <RequestTable data={requests} />;
+       </main> 
+    </div>
+ 
+)
 }

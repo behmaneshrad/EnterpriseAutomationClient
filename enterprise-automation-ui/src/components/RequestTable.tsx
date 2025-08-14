@@ -82,7 +82,7 @@ const RequestTable: React.FC<Props> = ({ data }) => {
             {filteredData.map((req) => (
               <tr
                 key={req.id}
-                className="border-y-4 border-gray-50 hover:bg-gray-50 text-gray-700"
+                className="border-y-4 border-gray-50 hover:bg-gray-100 text-gray-700"
               >
                 <td className="px-4 py-2">{req.id}</td>
                 <td className="px-4 py-2">{req.type}</td>
