@@ -10,11 +10,9 @@ const RoleLoader = () => {
 
   useEffect(() => {
     if (session?.user?.roles && session.user.roles.length > 0) {
-      const userRole = session.user.roles[0];
-      setRole(userRole);
-      localStorage.setItem("userRole", userRole);
+      setRole(session.user.roles[0]);
     }
-  }, [session, setRole]);
+  }, [session]);
 
   return null;
 };
