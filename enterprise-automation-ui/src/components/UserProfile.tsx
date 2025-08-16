@@ -1,23 +1,17 @@
 "use client";
 
 import React from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/context/AuthContext";
 
 const UserProfile = () => {
-  const { data: session, status } = useSession();
-  const user = session?.user
+  const { user, isAuthenticated} = useAuth();
 
-  if (status === "loading") {
-    return;
-    <div>در حال بارگذاری...</div>;
-  }
-  // اگر کاربر لاگین نکرده بود
-  if (!session || !session.user) {
+  if (!isAuthenticated) {
     return (
       <div className="container mx-auto p-8 text-center">
-        <p>لطفا برای مشاهده پروفایل، ابتدا وارد شوید.</p>
+        <p>در حال بارگذاری اطلاعات...</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -33,7 +27,7 @@ const UserProfile = () => {
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">نقش:</span>
-            <span className="text-gray-900 dark:text-white">{user?.roles?.[0]}</span>
+            <span className="text-gray-900 dark:text-white">{user?.role?.[0]}</span>
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">ایمیل:</span>
@@ -42,8 +36,8 @@ const UserProfile = () => {
           <div className="flex justify-between items-center">
             <span className="text-gray-600 font-medium">وضعیت:</span>
             {/*  status نمایش داینامیک وضیعیت  */}
-            <span className={status === 'authenticated' ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
-                {status === 'authenticated' ? 'غیرفعال' : 'فعال'}
+            <span className={isAuthenticated ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
+                {isAuthenticated ? 'غیرفعال' : 'فعال'}
             </span>
           </div>
         </div>
