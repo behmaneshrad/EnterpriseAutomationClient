@@ -40,13 +40,7 @@ const WorkflowForm = () => {
     setIsSubmitting(true);
 
      try {
-      const apiUrl = 'http://localhost:5285/apibackend';
-      
-      // ساختاردهی داده‌ها برای ارسال
-      const requestBody = {
-        workflowName: data.workflowName,
-        steps: data.steps.map(step => ({ name: step.stepName })),
-      };
+      const apiUrl = `${process.env.NEXT_POBLIC_API_URL}/api/workflowdefinitions/upsertworkflow`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -54,7 +48,7 @@ const WorkflowForm = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.accessToken}`,
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
@@ -142,7 +136,7 @@ const WorkflowForm = () => {
             disabled={isSubmitting}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 focus:outline-none"
           >
-            {isSubmitting ? "ثبت فرآیند" : "در حال ثبت..."}
+            {isSubmitting ? "در حال ثبت..." : "ثبت فرآیند"}
           </button>
         </div>
       </form>
