@@ -5,11 +5,11 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { WorkflowFormSchema, workflowSchema } from "@/schemas/workflowSchema";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/context/AuthContext";
 
 const WorkflowForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {data: session} = useSession();
+  const {tokens, isAuthenticated}= useAuth();
 
   const {
     register,
@@ -32,7 +32,7 @@ const WorkflowForm = () => {
 
   const onSubmit = async (data: WorkflowFormSchema) => {
     // بررسی وجود توکن دسترسی
-    if (!session?.accessToken) {
+    if (!isAuthenticated || !tokens?.accessToken) {
         toast.error('خطا: توکن دسترسی وجود ندارد. لطفا مجددا وارد شوید.');
         return;
     }
@@ -46,7 +46,7 @@ const WorkflowForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.accessToken}`,
+          'Authorization': `Bearer ${tokens.accessToken}`,
         },
         body: JSON.stringify(data),
       });
