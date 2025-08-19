@@ -1,6 +1,7 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import {useSession, signOut } from "next-auth/react";
+import { Session } from "next-auth";
 import React, {
   createContext,
   useContext,
@@ -15,7 +16,7 @@ interface User {
   name?: string | null;
   email?: string | null;
   role?: string;
-  roles?: string;
+  roles?: string[];
 }
 
 // تایپ داده های توکن
