@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
         session.idToken = token.idToken;
         
         session.user = {
-          id: token.user?.id || 'default-id',
+          id: token.user?.id || token.sub as string,
           name: token.user?.name || null,
           email: token.user?.email || null,
           roles: token.user?.roles || [],
