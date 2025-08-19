@@ -5,11 +5,13 @@ import { RoleProvider } from "@/context/RoleContext";
 import Header from "./Header";
 import ToastProvider from "./ToastProvider";
 import { AuthProvider } from "@/context/AuthContext";
-import React, { ReactNode } from "react";
+import { SessionProvider } from "next-auth/react";
+import { ReactNode } from "react";
 
 
 const AppWrapper = ({ children }: { children: ReactNode }) => {
   return (
+    <SessionProvider>
     <AuthProvider>
       <RoleProvider>
         <Header />
@@ -17,6 +19,7 @@ const AppWrapper = ({ children }: { children: ReactNode }) => {
         <ToastProvider/>
         </RoleProvider>
         </AuthProvider>
+        </SessionProvider>
   );
 };
 
