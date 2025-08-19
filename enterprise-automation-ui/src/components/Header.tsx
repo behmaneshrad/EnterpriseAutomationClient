@@ -23,7 +23,7 @@ const Header = () => {
           <div className="flex items-center space-x-4 rtl:space-x-reverse ">
             {/* نام، ایمیل و نقش کاربر */}
             <span className="text-sm">
-              {user?.name} | {user?.email} | ({user?.role})
+              {user?.name} | {user?.email} | ({user?.roles?.[0]})
             </span>
 
             {/* لینک پروفایل */}
