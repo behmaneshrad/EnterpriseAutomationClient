@@ -10,12 +10,11 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
       profile(profile) {
-        const roles = profile.realm_access?.roles || [];
         return {
           id: profile.sub,
           name: profile.name || profile.preferred_username,
           email: profile.email,
-          roles, // همه نقش‌ها
+          roles: profile.realm_access?.roles || [],
         };
       },
     },
@@ -28,34 +27,27 @@ export const authOptions: NextAuthOptions = {
         token.idToken = account.id_token;
       }
       if (user) {
-        token.roles = user.roles; // ذخیره همه نقش‌ها
         token.user = {
+          id: user.id,
           name: user.name,
           email: user.email,
           roles: user.roles,
+        }
         };
-      }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.accessToken = token.accessToken as string;
-        session.refreshToken = token.refreshToken as string;
-        session.idToken = token.idToken as string;
-
-        if (session.user) {
-          session.user.id = token.sub as string;
-          session.user.name = token.user?.name;
-          session.user.email = token.user?.email;
-          session.user.roles = token.roles as string[];
-        } else {
-          session.user = {
-            id: token.sub as string,
-            name: token.user?.name,
-            email: token.user?.email,
-            roles: token.roles as string[],
-          };
-        }
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        session.idToken = token.idToken;
+        
+        session.user = {
+          id: token.user?.id || 'default-id',
+          name: token.user?.name || null,
+          email: token.user?.email || null,
+          roles: token.user?.roles || [],
+        };
       }
       return session;
     },
