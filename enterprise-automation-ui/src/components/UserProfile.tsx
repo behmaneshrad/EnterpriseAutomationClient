@@ -1,12 +1,20 @@
 "use client";
 
-import React from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/router";
 
 const UserProfile = () => {
   const { user, isAuthenticated} = useAuth();
+  const router = useRouter();
 
-  if (!isAuthenticated) {
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated || !user) {
     return (
       <div className="container mx-auto p-8 text-center">
         <p>در حال بارگذاری اطلاعات...</p>
@@ -27,7 +35,7 @@ const UserProfile = () => {
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">نقش:</span>
-            <span className="text-gray-900 dark:text-white">{user?.role?.[0]}</span>
+            <span className="text-gray-900 dark:text-white">{user?.roles?.[0]}</span>
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">ایمیل:</span>
