@@ -1,33 +1,26 @@
-"use client";
+'use client';
 
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import ActionTimeLine from '@/components/ActionTimeLine';
-import { notFound, useParams } from 'next/navigation';
-import toast from 'react-hot-toast';
 import WorkflowTimeline from '@/components/WorkflowTimeline';
+import ActionTimeline from '@/components/ActionTimeLine';
+import toast from 'react-hot-toast';
+import { RequestDetails, WorkflowStep, Action } from '@/types/workflow';
 
+const RequestDetailsPage = () => {
+  const { tokens, isAuthenticated, user } = useAuth();
+  const { id } = useParams<{ id: string }>();
 
-interface Action {
-  phase: string;
-  performer: string;
-  actionType: string;
-  timestamp: string;
-}
-
-const RequestDetailPage = () => {
-  const {tokens, isAuthenticated} = useAuth();
-  const {id} = useParams<{id: string}>();
-
-  const [actions, setActions]= useState<Action[]>([]);
+  const [request, setRequest] = useState<RequestDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isAuthenticated && tokens?.accessToken && id) {
-      const fetchActions = async () => {
+      const fetchRequestDetails = async () => {
         setLoading(true);
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/requests/${id}/logs`;
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/requests/${id}`;
           const response = await fetch(apiUrl, {
             headers: {
               'Authorization': `Bearer ${tokens.accessToken}`,
@@ -35,48 +28,95 @@ const RequestDetailPage = () => {
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to fetch actions: ${response.statusText}`)
+            throw new Error(`Failed to fetch request details: ${response.statusText}`);
           }
 
           const data = await response.json();
-          setActions(data);
+          setRequest(data);
         } catch (error) {
-          console.error('Error fetching actions:', error);
-          toast.error('خطا در دریافت تاریخچه اقدامات')
+          console.error('Error fetching request details:', error);
+          toast.error('خطا در دریافت جزئیات درخواست.');
         } finally {
-          setLoading(false)
+          setLoading(false);
         }
-      }
-      fetchActions()
-    } else if (!isAuthenticated) {
-      // اگر کاربر لاگین نکرده باشد
-      setLoading(false)
+      };
+      fetchRequestDetails();
     }
-  }, [isAuthenticated, tokens, id])
-
-  if (!isAuthenticated && !loading) {
-    // اگر کاربر لاگین نکرده بود به صفحه لاگین منتقل شود
-    return (
-      <div className='container mx-auto p-8 text-center'>
-        <p>لطفا برای مشاهده جزئیات،ابتدا وارد شوید.</p>
-      </div>
-    )
-  }
+  }, [isAuthenticated, tokens, id]);
 
   if (loading) {
-    return (
-      <div className='container mx-auto p-8 text-center'>
-        <p>در حال بارگذاری تاریخچه اقدامات...</p>
-      </div>
-    )
+    return <div className="text-center mt-10">در حال بارگذاری...</div>;
   }
 
-  return (
-    <div className='container mx-auto p-8'>
-      <h1 className='text-4xl font-bold mb-8 text-center'>جزئیات درخواست (ID: {id})</h1>
-      <ActionTimeLine actions={actions}/>
-    </div>
-  )
-}
+  if (!isAuthenticated) {
+    return <div className="text-center mt-10">لطفا وارد شوید.</div>;
+  }
 
-export default RequestDetailPage;
+  if (!request) {
+    return <div className="text-center mt-10 text-red-500">درخواست مورد نظر یافت نشد.</div>;
+  }
+  
+  const workflowSteps: WorkflowStep[] = request.workflow.workflowSteps.map(step => {
+    let status: 'pending' | 'approved' | 'rejected' | string = 'pending';
+    if (step.stepId <= request.currentStep) {
+      status = 'approved';
+    }
+    if (step.stepId === request.currentStep && request.currentStatus === 'pending') {
+      status = 'pending';
+    }
+    if (request.currentStatus === 'rejected') {
+      status = 'rejected';
+    }
+    
+    return {
+      stepId: step.stepId,
+      stepName: step.stepName,
+      approverRole: step.approverRole,
+      status: status
+    };
+  });
+
+  const userRole = user?.roles?.[0];
+  const currentStepDetails = request.workflow.workflowSteps.find(step => step.stepId === request.currentStep);
+  const isUserApprover = userRole === currentStepDetails?.approverRole;
+  const isPending = request.currentStatus === 'pending';
+
+  return (
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">جزئیات درخواست</h1>
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
+        <div className="mb-6">
+          <p className="text-gray-500 text-sm">عنوان</p>
+          <h2 className="text-xl font-semibold">{request.title}</h2>
+        </div>
+        <div className="mb-6">
+          <p className="text-gray-500 text-sm">شرح</p>
+          <p className="text-gray-700">{request.description}</p>
+        </div>
+        
+        <div className="mb-8">
+          <h3 className="text-lg font-bold mb-4">مراحل گردش کار</h3>
+          <WorkflowTimeline steps={workflowSteps} />
+        </div>
+
+        <div className="mb-8">
+          <h3 className="text-lg font-bold mb-4">تاریخچه اقدامات</h3>
+          <ActionTimeline actions={request.actions} />
+        </div>
+        
+        <div className="flex justify-end mt-8 space-x-4 rtl:space-x-reverse">
+          {isPending && isUserApprover && (
+            <button className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+              تایید
+            </button>
+          )}
+          <button className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+            بستن
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RequestDetailsPage;
