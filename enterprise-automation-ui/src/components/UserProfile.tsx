@@ -1,25 +1,39 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const UserProfile = () => {
-  const { user, isAuthenticated} = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login')
-    }
-  }, [isAuthenticated, router]);
+    setIsMounted(true);
+  }, []);
 
-  if (!isAuthenticated || !user) {
+
+  useEffect(() => {
+    if (!isMounted && isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router, isMounted]);
+
+  if (!isAuthenticated || !isMounted) {
     return (
       <div className="container mx-auto p-8 text-center">
         <p>در حال بارگذاری اطلاعات...</p>
       </div>
-    )
+    );
+  }
+
+  if (!isAuthenticated && isMounted) {
+    return (
+      <div className="flex justify-col justify-center items-center min-h-screen">
+        <h1 className="text-xl">لطفا برای مشاهده پروفایل، ابتدا وارد شوید</h1>
+      </div>
+    );
   }
 
   return (
@@ -35,7 +49,9 @@ const UserProfile = () => {
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">نقش:</span>
-            <span className="text-gray-900 dark:text-white">{user?.roles?.[0]}</span>
+            <span className="text-gray-900 dark:text-white">
+              {user?.roles?.[0]}
+            </span>
           </div>
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">ایمیل:</span>
@@ -44,8 +60,14 @@ const UserProfile = () => {
           <div className="flex justify-between items-center">
             <span className="text-gray-600 font-medium">وضعیت:</span>
             {/*  status نمایش داینامیک وضیعیت  */}
-            <span className={isAuthenticated ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
-                {isAuthenticated ? 'غیرفعال' : 'فعال'}
+            <span
+              className={
+                isAuthenticated
+                  ? "text-green-600 font-bold"
+                  : "text-red-600 font-bold"
+              }
+            >
+              {isAuthenticated ? "غیرفعال" : "فعال"}
             </span>
           </div>
         </div>
