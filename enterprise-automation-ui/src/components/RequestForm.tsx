@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 // zod اعتبار سنجی با
 const RequestFormSchema = z.object({
@@ -21,9 +23,10 @@ const RequestFormSchema = z.object({
 type RequestFormSchema = z.infer<typeof RequestFormSchema>;
 
 const RequestForm = () => {
-  // استفاده از هوک جدید useAuth
   const { tokens } = useAuth();
-  const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
 
   //React Hook Form با  resolver راه اندازی
   const {
@@ -36,26 +39,36 @@ const RequestForm = () => {
   });
 
   const onSubmit = async (data: RequestFormSchema) => {
-    setSubmissionStatus("در حال درخواست...");
+    if (!tokens?.accessToken) {
+      toast.error("خطا: توکن دسترسی وجود ندارد.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5285/api/request/submit", {
-        method: "POST",
+      const apiUrl =  `${process.env.NEXT_PUBLIC_API_URL}/api/requests/submit`;
+        const response = await fetch(apiUrl, {
+          method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${tokens?.accessToken}`,
         },
         body: JSON.stringify(data),
       });
-
+        
       if (response.ok) {
-        setSubmissionStatus("درخواست با موفقیت ارسال شد!");
+        toast.success("درخواست با موفقیت ارسال شد!");
+        reset();
+        router.push("/request/success");
       } else {
         const errorData = await response.json();
-        setSubmissionStatus(`خطا در ارسال: ${errorData.message}`);
+        toast.error(`خطا در ارسال: ${errorData.message}`);
       }
     } catch (error) {
-      setSubmissionStatus("خطا در برقراری ارتباط با سرور");
+      toast.error("خطا در برقراری ارتباط با سرور");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,18 +125,12 @@ const RequestForm = () => {
           <div>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              ارسال درخواست
+              {isSubmitting ? "در حال ارسال..." : "ارسال درخواست"}
             </button>
           </div>
-
-          {/* وضعیت ارسال */}
-          {submissionStatus && (
-            <p className="text-center mt-4 text-sm font-medium">
-              {submissionStatus}
-            </p>
-          )}
         </form>
       </div>
     </div>
