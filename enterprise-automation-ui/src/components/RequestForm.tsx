@@ -3,24 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
-// zod اعتبار سنجی با
-const RequestFormSchema = z.object({
-  title: z
-    .string()
-    .min(5, { message: "عنوان باید حداقل 5 کاراکتر باشد." })
-    .max(100, { message: "عنوان نمی‌تواند بیشتر از 100 کاراکتر باشد." }),
-  description: z
-    .string()
-    .min(10, { message: "شرح باید حداقل 10 کاراکتر باشد." })
-    .max(500, { message: "شرح نمی‌تواند بیشتر از 500 کاراکتر باشد." }),
-});
-
-type RequestFormSchema = z.infer<typeof RequestFormSchema>;
+import { requestFormSchema, RequestFormSchema } from "@/schemas/requestFormSchema";
 
 const RequestForm = () => {
   const { tokens } = useAuth();
@@ -35,7 +21,7 @@ const RequestForm = () => {
     formState: { errors },
     reset,
   } = useForm<RequestFormSchema>({
-    resolver: zodResolver(RequestFormSchema),
+    resolver: zodResolver(requestFormSchema),
   });
 
   const onSubmit = async (data: RequestFormSchema) => {
