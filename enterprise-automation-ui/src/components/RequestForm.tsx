@@ -14,7 +14,6 @@ const RequestForm = () => {
   const router = useRouter();
 
 
-  //React Hook Form با  resolver راه اندازی
   const {
     register,
     handleSubmit,
