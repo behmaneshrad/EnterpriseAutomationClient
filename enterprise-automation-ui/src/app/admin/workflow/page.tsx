@@ -3,22 +3,22 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import WorkflowForm from "@/components/WorkflowForm";
+import { useRouter } from "next/navigation";
+
 
 const AdminWorkFlowPage = () => {
   const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto p-8 text-center">
-        <p>درحال بارگذاری...</p>
-      </div>
-    );
+    router.push('/login')
+    return null;
   }
 
-  // بررسی نقش کاربر برای دسترسی به این صفحه
-  const isAdminOrApprover = user?.role === "admin" || user?.role === "approver";
+  const isAdmin = user?.roles?.includes('admin');
+  const isApprover = user?.roles?.includes('approver');
 
-  if (!isAdminOrApprover) {
+  if (!isAdmin && isApprover) {
     return (
       <div className="container mx-auto p-8 text-center">
         <h1 className="text-2xl font-bold text-red-600">
