@@ -7,7 +7,7 @@ const EmployeeDashboardPage = async () => {
   const user = session?.user;
 
   // بررسی وضعیت ورود و نقش کاربر
-  if (!session || !session.user?.roles?.includes("employee")) {
+  if (!session || !session.user.roles.includes("employee")) {
     redirect("/login");
   }
   return (
