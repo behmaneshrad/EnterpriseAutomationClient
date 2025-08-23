@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import WorkflowTimeline from '@/components/WorkflowTimeline';
-import ActionTimeline from '@/components/ActionTimeLine';
+import ActionTimeline from '@/components/ActionTimeline';
 import toast from 'react-hot-toast';
 import { RequestDetails, WorkflowStep, Action } from '@/types/workflow';
 
@@ -58,16 +58,20 @@ const RequestDetailsPage = () => {
   
   const workflowSteps: WorkflowStep[] = request.workflow.workflowSteps.map(step => {
     let status: 'pending' | 'approved' | 'rejected' | string = 'pending';
-    if (step.stepId <= request.currentStep) {
+    if (step.stepId < request.currentStep) { // 
       status = 'approved';
-    }
-    if (step.stepId === request.currentStep && request.currentStatus === 'pending') {
+    } else if (step.stepId === request.currentStep) {
+    if (request.currentStatus === 'approved') {
+      status = 'approved';
+    } else if (request.currentStatus === 'rejected') {
+      status = 'rejected';
+    } else {
       status = 'pending';
     }
-    if (request.currentStatus === 'rejected') {
-      status = 'rejected';
-    }
-    
+  } else {
+    status = 'pending';
+  }
+
     return {
       stepId: step.stepId,
       stepName: step.stepName,
@@ -76,6 +80,7 @@ const RequestDetailsPage = () => {
     };
   });
 
+  // بررسی نقش کاربر و مرحله فعلی برای نمایش دکمه تائید
   const userRole = user?.roles?.[0];
   const currentStepDetails = request.workflow.workflowSteps.find(step => step.stepId === request.currentStep);
   const isUserApprover = userRole === currentStepDetails?.approverRole;
