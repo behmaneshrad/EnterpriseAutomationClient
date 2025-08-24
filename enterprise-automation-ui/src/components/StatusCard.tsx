@@ -1,3 +1,5 @@
+"use client";
+
 interface Props {
     title: string;
     count: number;
