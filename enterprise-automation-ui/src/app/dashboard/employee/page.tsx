@@ -7,8 +7,7 @@ const EmployeeDashboardPage = async () => {
   const user = session?.user;
 
   // بررسی وضعیت ورود و نقش کاربر
-  if (!session || user?.roles?.[0] !== "employee") {
-    // اگر کاربر لاگین نکرده باشد یا با نقش کارمند وارد نشده باشد به صفحه اصلی یا لاگین منتقل میشود.
+  if (!session || !session.user.roles.includes("employee")) {
     redirect("/login");
   }
   return (
