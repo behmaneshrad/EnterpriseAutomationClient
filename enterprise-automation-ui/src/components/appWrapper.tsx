@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionProvider } from "next-auth/react";
 import Header from "./Header";
 import ToastProvider from "./ToastProvider";
 import { AuthProvider } from "@/context/AuthContext";
@@ -7,11 +8,13 @@ import { ReactNode } from "react";
 
 const AppWrapper = ({ children }: { children: ReactNode }) => {
   return (
+    <SessionProvider>
     <AuthProvider>
       <Header />
       <main className="p-4">{children}</main>
       <ToastProvider />
     </AuthProvider>
+    </SessionProvider>
   );
 };
 
