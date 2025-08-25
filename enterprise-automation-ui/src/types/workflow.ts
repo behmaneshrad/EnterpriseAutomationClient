@@ -10,7 +10,7 @@ export interface Action {
 export interface WorkflowStep {
   stepId: number; 
   stepName: string; 
-  status: 'pending' | 'approved' | 'rejected' | string;
+  status: string;
   approverRole: string;
 }
 
@@ -19,7 +19,7 @@ export interface RequestDetails {
   requestId: number;
   title: string;
   description: string;
-  currentStatus: "pending" | "approved" | "rejected" | string;
+  currentStatus: string;
   currentStep: number;
   workflow: {
     workflowDefinitionId: number;
