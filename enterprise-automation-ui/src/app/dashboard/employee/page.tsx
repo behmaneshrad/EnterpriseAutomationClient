@@ -8,10 +8,6 @@ const EmployeeDashboardPage = async () => {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  // بررسی وضعیت ورود و نقش کاربر
-  if (!session || !session.user.roles.includes("employee")) {
-    redirect("/login");
-  }
   return (
     <div className="p-8">
       <h1 className="text-4xl font-bold mb-4">داشبورد کارمندان</h1>
