@@ -1,21 +1,32 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { useSession, signOut } from "next-auth/react";
 
+
+// تایپ داده های توکن
 interface AuthTokens {
   accessToken?: string;
   refreshToken?: string;
   idToken?: string;
 }
 
+// تایپ داده های کاربر
+interface UserProfileType {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  roles: string[];
+}
+// ساختار کانتکست
 interface AuthContextType {
-  user: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    roles: string[];
-  } | null;
+  user: UserProfileType | null;
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   logout: () => void;
@@ -28,14 +39,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
 
   useEffect(() => {
+    console.log("Session object:", session);
     if (status === "authenticated" && session?.user) {
-      const newUser = {
+      const newUser = { 
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
         roles: session.user.roles,
       };
-
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
     } else if (status === "unauthenticated") {
@@ -63,6 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
   return context;
 }
