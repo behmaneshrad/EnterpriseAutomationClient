@@ -1,34 +1,36 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 const UserProfile = () => {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+   if (!isAuthenticated) {
+    router.push('/login')
+   }
+  }, [isAuthenticated, router]);
 
 
   useEffect(() => {
-    if (!isMounted && isAuthenticated) {
+    if (isAuthenticated || !user) {
       router.push("/login");
     }
-  }, [isAuthenticated, router, isMounted]);
+  }, [isAuthenticated, router]);
 
-  if (!isAuthenticated || !isMounted) {
+  // پیام بارگذاری
+  if (!isAuthenticated || !user) {
     return (
-      <div className="container mx-auto p-8 text-center">
-        <p>در حال بارگذاری اطلاعات...</p>
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-xl">در حال بارگذاری اطلاعات...</p>
       </div>
     );
   }
 
-  if (!isAuthenticated && isMounted) {
+  if (!isAuthenticated  || !user) {
     return (
       <div className="flex justify-col justify-center items-center min-h-screen">
         <h1 className="text-xl">لطفا برای مشاهده پروفایل، ابتدا وارد شوید</h1>
