@@ -15,12 +15,6 @@ const UserProfile = () => {
   }, [isAuthenticated, router]);
 
 
-  useEffect(() => {
-    if (isAuthenticated || !user) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, router]);
-
   // پیام بارگذاری
   if (!isAuthenticated || !user) {
     return (
@@ -69,7 +63,7 @@ const UserProfile = () => {
                   : "text-red-600 font-bold"
               }
             >
-              {isAuthenticated ? "غیرفعال" : "فعال"}
+              {isAuthenticated ? "فعال" : "غیرفعال"}
             </span>
           </div>
         </div>
