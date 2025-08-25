@@ -10,8 +10,8 @@ const EmployeeDashboardPage = async () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-bold mb-4">داشبورد کارمندان</h1>
-      <p className="text-gray-600 dark:text-gray-300">
+      <h1 className="text-4xl text-gray-900 font-bold mb-4">داشبورد کارمندان</h1>
+      <p className="text-gray-600 dark:text-gray-600">
         به داشبورد کارمندان خوش آمدید، {user?.name}.
       </p>
     </div>
