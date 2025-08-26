@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import WorkflowTimeline from '@/components/WorkflowTimeline';
 import ActionTimeline from '@/components/ActionTimeline';
 import toast from 'react-hot-toast';
-import { RequestDetails, WorkflowStep, Action } from '@/types/workflow';
+import { RequestDetails, WorkflowStep } from '@/types/workflow';
 
 const RequestDetailsPage = () => {
   const { tokens, isAuthenticated, user } = useAuth();
