@@ -15,8 +15,10 @@ export async function getWorkflowById(id: number) {
   
       const data = await response.json();
       return data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       console.error('خطا در دریافت Workflow:', error.message);
       throw error;
     }
   }
+}
