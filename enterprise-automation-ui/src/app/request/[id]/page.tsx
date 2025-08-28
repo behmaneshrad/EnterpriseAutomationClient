@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import WorkflowTimeline from '@/components/WorkflowTimeline';
-import ActionTimeline from '@/components/ActionTimeline';
+import ActionTimeline from '@/components/ActionTimeLine';
 import toast from 'react-hot-toast';
-import { RequestDetails, WorkflowStep } from '@/types/workflow';
+import { RequestDetails, WorkflowStep, Action } from '@/types/workflow';
 
 const RequestDetailsPage = () => {
   const { tokens, isAuthenticated, user } = useAuth();
@@ -58,7 +58,7 @@ const RequestDetailsPage = () => {
   
   const workflowSteps: WorkflowStep[] = request.workflow.workflowSteps.map(step => {
     let status: 'pending' | 'approved' | 'rejected' | string = 'pending';
-    if (step.stepId < request.currentStep) { // 
+    if (step.stepId < request.currentStep) { 
       status = 'approved';
     } else if (step.stepId === request.currentStep) {
     if (request.currentStatus === 'approved') {
