@@ -2,6 +2,7 @@
 
 import NavIcon from "./NavIcon";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function Sidebar() {
     >
       {/* دکمه باز و بسته کردن منو */}
       <button onClick={() => setIsOpen(!isOpen)} className="mb-16 mt-2 ">
-        <img src="/icons/menu.svg" alt="منو" width={24} height={24} />
+        <Image src="/icons/menu.svg" alt="منو" width={24} height={24} />
       </button>
 
       {/* آیکون‌ها */}
