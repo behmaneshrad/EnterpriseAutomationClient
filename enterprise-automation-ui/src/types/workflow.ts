@@ -10,12 +10,12 @@ export interface Action {
 export interface WorkflowStep {
   stepId: number; 
   stepName: string; 
-  status: string;
+  status: 'pending' | 'approved' | 'rejected' | string;
   approverRole: string;
 }
 
 // اینترفیس برای جزئیات کامل درخواست
-export interface RequestDetails {
+export interface RequestDetails{
   requestId: number;
   title: string;
   description: string;
