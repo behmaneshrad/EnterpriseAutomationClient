@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 
 type StatusType = '' | 'pending' | 'approved' | 'rejected';
 
@@ -92,7 +93,7 @@ const RequestTable: React.FC<Props> = ({ data }) => {
                 <td className="px-4 py-2">{getStatusIcon(req.statusIcon)}</td>
                 <td className="px-4 py-2">{req.description}</td>
                 <td className="px-4 py-2 text-center">
-                  <img
+                  <Image
                     src="/icons/eye.svg"
                     alt="مشاهده"
                     className="w-5 h-5 cursor-pointer"
