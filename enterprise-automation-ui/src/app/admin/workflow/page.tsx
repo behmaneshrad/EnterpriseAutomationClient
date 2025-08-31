@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
-import WorkflowForm from "@/components/WorkflowForm";
+import WorkflowForm from "@/components/workflow/WorkflowForm";
 import { useRouter } from "next/navigation";
 
 
