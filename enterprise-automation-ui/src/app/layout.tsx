@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import React from "react";
-import AppWrapper from "@/components/appWrapper";
+import AppWrapper from "@/components/layout/appWrapper";
 import {Vazirmatn} from 'next/font/google'
 
 const vazirmatn = Vazirmatn({
