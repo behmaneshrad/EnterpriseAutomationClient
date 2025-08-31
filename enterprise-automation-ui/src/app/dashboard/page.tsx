@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { StatusCard } from "@/components/StatusCard";
-import { ActionButton } from "@/components/ActionButton";
+import { StatusCard } from "@/components/ui/StatusCard";
+import { ActionButton } from "@/components/ui/ActionButton";
 import Sidebar from "@/components/Sidebar";
 
 export default async function DashboardPage() {
