@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import WorkflowTimeline from "@/components/WorkflowTimeline";
+import WorkflowTimeline from "@/components/workflow/WorkflowTimeline";
 import ActionTimeline from "@/components/ActionTimeLine";
 import toast from "react-hot-toast";
 import { RequestDetails, WorkflowStep } from "@/types/workflow";

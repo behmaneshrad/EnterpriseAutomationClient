@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { StatusCard } from "@/components/ui/StatusCard";
 import { ActionButton } from "@/components/ui/ActionButton";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);

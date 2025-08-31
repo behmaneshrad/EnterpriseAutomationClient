@@ -1,4 +1,4 @@
-import RequestTable, { Request } from "@/components/RequestTable";
+import RequestTable, { Request } from "@/components/request/RequestTable";
 import Sidebar from "@/components/Sidebar";
 
 const requests: Request[] = [
