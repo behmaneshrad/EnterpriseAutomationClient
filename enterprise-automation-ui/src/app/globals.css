@@ -18,16 +18,9 @@
     --foreground: #ededed;
   }
 }
-@font-face {
-  font-family: "BYekan";
-  src: url("/fonts/BYekan.ttf") format("ttf");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "BYekan", Arial, Helvetica, sans-serif;
 }
