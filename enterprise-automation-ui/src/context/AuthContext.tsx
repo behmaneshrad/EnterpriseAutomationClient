@@ -9,7 +9,6 @@ import {
 } from "react";
 import { useSession, signOut } from "next-auth/react";
 
-
 // تایپ داده های توکن
 interface AuthTokens {
   accessToken?: string;
@@ -36,12 +35,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  const [user, setUser] = useState<AuthContextType["user"]>(null);
+  const [user, setUser] = useState<AuthContextType["user"]>(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse user from localstorage:", error);
+      return null;
+    }
+  });
 
   useEffect(() => {
     console.log("Session object:", session);
     if (status === "authenticated" && session?.user) {
-      const newUser = { 
+      const newUser = {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
