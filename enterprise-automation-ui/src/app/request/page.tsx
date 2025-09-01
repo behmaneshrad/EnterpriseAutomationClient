@@ -1,5 +1,5 @@
 import RequestTable, { Request } from "@/components/request/RequestTable";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 
 const requests: Request[] = [
   { id: 1, type: "خرید مودم ", statusIcon: "pending", description: "در حال بررسی" },
