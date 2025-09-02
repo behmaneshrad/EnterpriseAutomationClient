@@ -1,6 +1,6 @@
 "use client";
 
-import NavIcon from "./layout/NavIcon";
+import NavIcon from "./NavIcon";
 import { useState } from "react";
 import Image from "next/image";
 
