@@ -2,6 +2,7 @@ import {z} from 'zod';
 
 export const workflowStepSchema = z.object({
     stepName: z.string().min(3, 'نام مرحله باید حداقل ۳ کاراکتر باشد.'),
+    approverRole: z.string().min(1, 'نقش تائید کننده باید مشخص شود.')
 });
 
 export const workflowSchema = z.object({
