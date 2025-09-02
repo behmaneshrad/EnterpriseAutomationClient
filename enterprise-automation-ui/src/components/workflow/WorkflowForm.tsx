@@ -6,6 +6,8 @@ import { WorkflowFormSchema, workflowSchema } from "@/schemas/workflowSchema";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
+import axiosInstance from "@/lib/api";
+
 
 const WorkflowForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +23,7 @@ const WorkflowForm = () => {
     resolver: zodResolver(workflowSchema),
     defaultValues: {
       workflowName: "",
-      steps: [{ stepName: "" }],
+      steps: [{ stepName: "" , approverRole: "" }],
     },
   });
 
@@ -40,30 +42,27 @@ const WorkflowForm = () => {
     setIsSubmitting(true);
 
      try {
-      const apiUrl = `${process.env.NEXT_POBLIC_API_URL}/api/workflowdefinitions/upsertworkflow`;
+      const apiUrl = `/api/workflowdefinitions/upsertworkflow`;
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokens.accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const requestBody = {
+        workflowName: data.workflowName,
+        steps: data.steps.map(step => ({ name: step.stepName, approverRole: step.approverRole})),
+      }
 
-      if (response.ok) {
-        toast.success('فرآیند با موفقیت ثبت شد!');
+      const response = await axiosInstance.post(apiUrl, requestBody);
+
+      if (response.status === 201 || response.status === 200) {
+                toast.success('فرآیند با موفقیت ثبت شد!');
         reset();
       } else {
-        const errorData = await response.json();
-        toast.error(`خطا در ثبت فرآیند: ${errorData.message || response.statusText}`);
+        toast.error(`خطا در ثبت فرآیند: ${response.data.message || response.statusText}`);
       }
     } catch (error) {
       toast.error('خطا در اتصال به سرور. لطفا دوباره امتحان کنید.');
     } finally {
       setIsSubmitting(false);
     }
-  };
+      }
 
   return (
     <div className="max-w-xl mx-auto p-8 rounded-lg shadow-xl bg-gray-100 dark:bg-gray-800">
@@ -119,7 +118,7 @@ const WorkflowForm = () => {
           ))}
           <button
             type="button"
-            onClick={() => append({ stepName: "" })}
+            onClick={() => append({ stepName: "" , approverRole: "" })}
             className="mt-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none"
           >
             افزودن مرحله
