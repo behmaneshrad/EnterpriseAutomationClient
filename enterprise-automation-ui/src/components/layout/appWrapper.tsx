@@ -2,7 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import Header from "./Header";
-import ToastProvider from "./ToastProvider";
+import ToastProvider from "@/components/ui/ToastProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { ReactNode } from "react";
 
