@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // اضافه کردن توکن به صورت خودکار
 axiosInstance.interceptors.request.use(
   (config) => {
-    const { tokens } = useAuth();
+    const tokens = JSON.parse(localStorage.getItem("tokens") || "{}");
     if (tokens?.accessToken) {
       config.headers.Authorization = `Bearer ${tokens.accessToken}`;
     }
