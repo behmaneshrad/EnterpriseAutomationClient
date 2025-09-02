@@ -6,7 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { requestFormSchema, RequestFormSchema } from "@/schemas/requestFormSchema";
+import {
+  requestFormSchema,
+  RequestFormSchema,
+} from "@/schemas/requestFormSchema";
+import axiosInstance from "@/lib/api";
 
 interface Workflow {
   id: string;
@@ -14,9 +18,9 @@ interface Workflow {
 }
 
 const RequestForm = () => {
-  const { tokens } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [loadingWorkflows, setLoadingWorkflows] = useState<boolean>(false);
   const router = useRouter();
 
   const {
@@ -28,58 +32,34 @@ const RequestForm = () => {
     resolver: zodResolver(requestFormSchema),
   });
 
-  // واکشی لیست Workflowها از API
   useEffect(() => {
     const fetchWorkflows = async () => {
+      setLoadingWorkflows(true);
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/workflows`, {
-          headers: {
-            Authorization: `Bearer ${tokens?.accessToken}`,
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setWorkflows(data);
-        } else {
-          toast.error("خطا در دریافت لیست فرآیندها");
-        }
+        const res = await axiosInstance.get("/api/workflows");
+        setWorkflows(res.data);
       } catch (err) {
-        toast.error("خطا در ارتباط با سرور برای دریافت فرآیندها");
+        toast.error("خطا در دریافت لیست فرآیندها");
+      } finally {
+        setLoadingWorkflows(false);
       }
     };
+    fetchWorkflows();
+  }, []);
 
-    if (tokens?.accessToken) fetchWorkflows();
-  }, [tokens]);
-
-  const onSubmit = async (data: RequestFormSchema & { workflowId: string }) => {
-    if (!tokens?.accessToken) {
-      toast.error("خطا: توکن دسترسی وجود ندارد.");
-      return;
-    }
-
+  const onSubmit = async (data: RequestFormSchema) => {
     setIsSubmitting(true);
 
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/requests/submit`;
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        toast.success("درخواست با موفقیت ارسال شد!");
-        reset();
-        router.push("/request/success");
-      } else {
-        const errorData = await response.json();
-        toast.error(`خطا در ارسال: ${errorData.message}`);
-      }
-    } catch (error) {
-      toast.error("خطا در برقراری ارتباط با سرور");
+      const response = await axiosInstance.post("/api/requests/submit", data);
+      toast.success("درخواست با موفیت ارسال شد");
+      reset();
+      router.push("/request/success");
+    } catch (err: unknown) {
+      const e = err as {response?: {data?: {message?: string}}; message?: string};
+      toast.error(
+        `خطا در ارسال: ${e.response?.data?.message || e.message || "نامشخص"}`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -88,12 +68,16 @@ const RequestForm = () => {
   return (
     <div className="flex flex-col items-center p-8 bg-gray-100 min-h-screen">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-center mb-6">ارسال درخواست جدید</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">
+          ارسال درخواست جدید
+        </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
           {/* فیلد عنوان */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700"
+            >
               عنوان درخواست
             </label>
             <input
@@ -102,12 +86,19 @@ const RequestForm = () => {
               {...register("title")}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            {errors.title && <p className="mt-2 text-sm text-red-600">{errors.title.message}</p>}
+            {errors.title && (
+              <p className="mt-2 text-sm text-red-600">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           {/* فیلد شرح */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
               شرح درخواست
             </label>
             <textarea
@@ -116,26 +107,43 @@ const RequestForm = () => {
               rows={4}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description.message}</p>}
+            {errors.description && (
+              <p className="mt-2 text-sm text-red-600">
+                {errors.description.message}
+              </p>
+            )}
           </div>
           {/* Dropdown انتخاب Workflow */}
+
           <div>
-            <label htmlFor="workflowId" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="workflowId"
+              className="block text-sm font-medium text-gray-700"
+            >
               انتخاب فرآیند
             </label>
-            <select
-              id="workflowId"
-              {...register("workflowId")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            >
-              <option value="">انتخاب فرآیند</option>
-              {workflows.map(wf => (
-                <option key={wf.id} value={wf.id}>
-                  {wf.name}
-                </option>
-              ))}
-            </select>
-            {errors.workflowId && <p className="mt-2 text-sm text-red-600">{errors.workflowId.message}</p>}
+
+            {loadingWorkflows ? (
+              <p className="text-gray-500 text-sm mt-1">در حال بارگذاری...</p> // ✅ وقتی لود می‌کنه
+            ) : (
+              <select
+                id="workflowId"
+                {...register("workflowId")}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+                <option value="">انتخاب فرآیند</option>
+                {workflows.map((wf) => (
+                  <option key={wf.id} value={wf.id}>
+                    {wf.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {errors.workflowId && (
+              <p className="mt-2 text-sm text-red-600">
+                {errors.workflowId.message}
+              </p>
+            )}
           </div>
 
           {/* دکمه ارسال */}
