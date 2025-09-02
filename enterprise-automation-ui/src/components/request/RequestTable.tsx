@@ -20,11 +20,11 @@ const getStatusIcon = (status: Request["statusIcon"]) => {
   const baseClass = "w-5 h-5 inline-block";
   switch (status) {
     case "approved":
-      return <img src="/icons/tick-square.svg" alt="تأیید شده" className={baseClass} />;
+      return <Image src="/icons/tick-square.svg" alt="تأیید شده" className={baseClass} />;
     case "rejected":
-      return <img src="/icons/close-square.svg" alt="رد شده" className={baseClass} />;
+      return <Image src="/icons/close-square.svg" alt="رد شده" className={baseClass} />;
     default:
-      return <img src="/icons/minus-square.svg" alt="در حال بررسی" className={baseClass} />;
+      return <Image src="/icons/minus-square.svg" alt="در حال بررسی" className={baseClass} />;
   }
 };
 
