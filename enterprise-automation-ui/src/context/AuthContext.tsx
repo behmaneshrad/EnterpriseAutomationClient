@@ -35,7 +35,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  const [user, setUser] = useState<AuthContextType["user"]>(null);
+  const [user, setUser] = useState<UserProfileType | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -46,11 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("Session object:", session);
     if (status === "authenticated" && session?.user) {
-      const newUser = {
+      const newUser: UserProfileType = {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
-        roles: session.user.roles,
+        roles: session.user.roles || [],
       };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
@@ -68,10 +68,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => signOut({ callbackUrl: "/login" });
 
-  const isAuthenticated = status === "authenticated";
 
   return (
-    <AuthContext.Provider value={{ user, tokens, isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ user, tokens, isAuthenticated: status === "authenticated", logout }}>
       {children}
     </AuthContext.Provider>
   );
