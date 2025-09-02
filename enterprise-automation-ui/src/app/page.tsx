@@ -1,9 +1,9 @@
-'use client';
-
+import RoleRedirector from "@/components/layout/RoleRedirector";
 
 export default function RedirectPage() {
   return (
     <>
+      <RoleRedirector />
       <main className="flex flex-col items-center justify-center min-h-screen bg-white">
         <h2 className="text-lg text-gray-700">در حال هدایت به داشبورد مناسب...</h2>
       </main>
