@@ -9,22 +9,22 @@ export const authOptions: NextAuthOptions = {
       wellKnown: process.env.KEYCLOAK_WELLKNOWN_URL,
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      profile(profile) {
+      profile(profile: any) {
         return {
-          id: profile.sub,
-          name: profile.name ?? profile.preferred_username,
-          email: profile.email,
+          id: profile.sub ?? profile.id ?? profile.email,
+          name: profile.name ?? profile.preferred_username ?? null,
+          email: profile.email ?? null,
           roles: profile.realm_access?.roles ?? [],
         };
       },
     },
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user , profile }) {
       if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.idToken = account.id_token;
+        token.accessToken = account.access_token ?? token.accessToken;
+        token.refreshToken = account.refresh_token ?? token.refreshToken;
+        token.idToken = (account as any ).id_token ?? (account as any).idToken;
       }
       if (user) {
         token.user = {
