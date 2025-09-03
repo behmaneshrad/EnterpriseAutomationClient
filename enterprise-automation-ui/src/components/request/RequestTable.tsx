@@ -20,11 +20,11 @@ const getStatusIcon = (status: Request["statusIcon"]) => {
   const baseClass = "w-5 h-5 inline-block";
   switch (status) {
     case "approved":
-      return <Image src="/icons/tick-square.svg" alt="تأیید شده" className={baseClass} />;
+      return <Image src="/icons/tick-square.svg" alt="تأیید شده"  width={20} height={20} className={baseClass} />;
     case "rejected":
-      return <Image src="/icons/close-square.svg" alt="رد شده" className={baseClass} />;
+      return <Image src="/icons/close-square.svg" alt="رد شده"  width={20} height={20} className={baseClass} />;
     default:
-      return <Image src="/icons/minus-square.svg" alt="در حال بررسی" className={baseClass} />;
+      return <Image src="/icons/minus-square.svg" alt="در حال بررسی" width={20} height={20} className={baseClass} />;
   }
 };
 
@@ -96,6 +96,8 @@ const RequestTable: React.FC<Props> = ({ data }) => {
                   <Image
                     src="/icons/eye.svg"
                     alt="مشاهده"
+                    width={20}
+                    height={20}
                     className="w-5 h-5 cursor-pointer"
                   />
                 </td>
