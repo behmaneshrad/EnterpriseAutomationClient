@@ -8,22 +8,23 @@ import {
   ReactNode,
 } from "react";
 import { useSession, signOut } from "next-auth/react";
+import type { Session } from "next-auth";
 
-// تایپ داده های توکن
+// توکن ها
 interface AuthTokens {
   accessToken?: string;
   refreshToken?: string;
   idToken?: string;
 }
 
-// تایپ داده های کاربر
+// اطلاعات کاربر 
 interface UserProfileType {
   id: string;
   name?: string | null;
   email?: string | null;
   roles: string[];
 }
-// ساختار کانتکست
+// context ساختار 
 interface AuthContextType {
   user: UserProfileType | null;
   tokens: AuthTokens | null;
@@ -35,12 +36,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  const [user, setUser] = useState<UserProfileType | null>(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
+  const [user, setUser] = useState<UserProfileType | null>(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse user from localstorage:", error)
+      return null;
+    }
+  })
     
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
-        roles: session.user.roles || [],
+        roles: session.user.roles,
       };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
@@ -60,17 +64,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [status, session]);
 
-  const tokens: AuthTokens = {
-    accessToken: session?.accessToken,
-    refreshToken: session?.refreshToken,
-    idToken: session?.idToken,
-  };
+  const tokens: AuthTokens | null =
+    status === "authenticated"
+      ? {
+          accessToken: session?.accessToken,
+          refreshToken: session?.refreshToken,
+          idToken: session?.idToken,
+        }
+      : null;
 
   const logout = () => signOut({ callbackUrl: "/login" });
 
+  const isAuthenticated = !!tokens?.accessToken; 
 
   return (
-    <AuthContext.Provider value={{ user, tokens, isAuthenticated: status === "authenticated", logout }}>
+    <AuthContext.Provider value={{ user, tokens, isAuthenticated, logout }}>
       {children}
     </AuthContext.Provider>
   );

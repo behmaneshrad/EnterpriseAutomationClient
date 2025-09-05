@@ -1,4 +1,5 @@
 import { NextAuthOptions } from "next-auth";
+import { KeycloakProfile, KeycloakAccount } from "@/types/keycloak";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -9,32 +10,32 @@ export const authOptions: NextAuthOptions = {
       wellKnown: process.env.KEYCLOAK_WELLKNOWN_URL,
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      profile(profile: any) {
+      profile(profile: KeycloakProfile) {
         return {
-          id: profile.sub ?? profile.id ?? profile.email,
-          name: profile.name ?? profile.preferred_username ?? null,
-          email: profile.email ?? null,
+          id: profile.sub,
+          name: profile.name ?? profile.preferred_username,
+          email: profile.email,
           roles: profile.realm_access?.roles ?? [],
         };
       },
     },
   ],
   callbacks: {
-    async jwt({ token, account, user , profile }) {
+    async jwt({ token, account, user }) {
       if (account) {
-        token.accessToken = account.access_token ?? token.accessToken;
-        token.refreshToken = account.refresh_token ?? token.refreshToken;
-        token.idToken = (account as any ).id_token ?? (account as any).idToken;
+        const kc = account as KeycloakAccount;
+        token.accessToken = kc.access_token;
+        token.refreshToken = kc.refresh_token;
+        token.idToken = kc.id_token;
       }
       if (user) {
         token.user = {
           id: user.id,
           name: user.name,
           email: user.email,
-          roles: user.roles ?? [],
+          roles: user.roles,
         };
-      
-        }
+      }
       return token;
     },
     async session({ session, token }) {
@@ -42,7 +43,7 @@ export const authOptions: NextAuthOptions = {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
         session.idToken = token.idToken;
-    
+
         session.user = {
           id: token.user?.id ?? (token.sub as string),
           name: token.user?.name ?? null,
