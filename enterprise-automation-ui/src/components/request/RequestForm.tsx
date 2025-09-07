@@ -21,6 +21,8 @@ const RequestForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [loadingWorkflows, setLoadingWorkflows] = useState<boolean>(false);
+  const [selectedType, setSelectedType] = useState<string>("مرخصی");
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   const {
@@ -47,6 +49,10 @@ const RequestForm = () => {
     fetchWorkflows();
   }, []);
 
+  const filteredWorkflows = workflows.filter((wf) =>
+    wf.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const onSubmit = async (data: RequestFormSchema) => {
     setIsSubmitting(true);
 
@@ -56,7 +62,10 @@ const RequestForm = () => {
       reset();
       router.push("/request/success");
     } catch (err: unknown) {
-      const e = err as {response?: {data?: {message?: string}}; message?: string};
+      const e = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
       toast.error(
         `خطا در ارسال: ${e.response?.data?.message || e.message || "نامشخص"}`
       );
@@ -66,94 +75,129 @@ const RequestForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-8 bg-gray-100 min-h-screen">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          ارسال درخواست جدید
+    <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-3xl">
+        <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-bold text-gray-800">
+          ثبت درخواست جدید
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* فیلد عنوان */}
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
+        <button onClick={() => router.back()} 
+          className="text-sm text-blue-800 hover:underline">
+            بازگشت
+          </button>
+          </div>
+
+          {/* انتخاب نوع درخواست */}
+          <div className="flex gap-2 mb-6">
+             {["مرخصی", "خرید تجهیزات"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setSelectedType(type)}
+              className={`px-4 py-2 rounded-md border ${
+                selectedType === type
+                  ? "bg-blue-800 text-white border-blue-800"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+              }`}
             >
-              عنوان درخواست
+              {type}
+            </button>
+          ))}
+          </div>
+
+          {/* فرم */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* اگر مرخصی انتخاب شد → فیلدهای تاریخ */}
+          {selectedType === "مرخصی" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  از تاریخ
+                </label>
+                <input
+                  type="date"
+                  {...register("startDate")}
+                  className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-800 focus:border-blue-800"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  تا تاریخ
+                </label>
+                <input
+                  type="date"
+                  {...register("endDate")}
+                  className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-800 focus:border-blue-800"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* توضیحات */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              توضیحات
+            </label>
+            <textarea
+              {...register("description")}
+              rows={4}
+              placeholder="توضیحات..."
+              className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-800 focus:border-blue-800"
+            />
+          </div>
+
+           {/* فایل پیوست */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              فایل پیوست:
+            </label>
+            <input
+              type="file"
+              {...register("file")}
+              className="mt-2 block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-800 file:text-white hover:file:bg-blue-900"
+            />
+          </div>
+
+           {/* انتخاب فرآیند + سرچ */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              انتخاب فرآیند
             </label>
             <input
               type="text"
-              id="title"
-              {...register("title")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="جستجو در فرآیندها..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="mt-1 mb-2 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-800 focus:border-blue-800"
             />
-            {errors.title && (
-              <p className="mt-2 text-sm text-red-600">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
-
-          {/* فیلد شرح */}
-          <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
+            <select
+              {...register("workflowId")}
+              className="block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-800 focus:border-blue-800"
             >
-              شرح درخواست
-            </label>
-            <textarea
-              id="description"
-              {...register("description")}
-              rows={4}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-            {errors.description && (
-              <p className="mt-2 text-sm text-red-600">
-                {errors.description.message}
-              </p>
-            )}
+               <option value="">انتخاب فرآیند</option>
+              {filteredWorkflows.map((wf) => (
+                <option key={wf.id} value={wf.id}>
+                  {wf.name}
+                </option>
+              ))}
+            </select>
           </div>
-          {/* Dropdown انتخاب Workflow */}
 
-          <div>
-            <label
-              htmlFor="workflowId"
-              className="block text-sm font-medium text-gray-700"
+               {/* دکمه‌ها */}
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-6 py-2 border rounded-md text-gray-700 border-gray-300 hover:bg-gray-100"
             >
-              انتخاب فرآیند
-            </label>
-
-            {loadingWorkflows ? (
-              <p className="text-gray-500 text-sm mt-1">در حال بارگذاری...</p> // ✅ وقتی لود می‌کنه
-            ) : (
-              <select
-                id="workflowId"
-                {...register("workflowId")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                <option value="">انتخاب فرآیند</option>
-                {workflows.map((wf) => (
-                  <option key={wf.id} value={wf.id}>
-                    {wf.name}
-                  </option>
-                ))}
-              </select>
-            )}
-            {errors.workflowId && (
-              <p className="mt-2 text-sm text-red-600">
-                {errors.workflowId.message}
-              </p>
-            )}
-          </div>
-
-          {/* دکمه ارسال */}
-          <div>
+              لغو
+            </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-8"
+              className="px-6 py-2 rounded-md text-white bg-blue-800 hover:bg-blue-900 disabled:opacity-50"
             >
-              {isSubmitting ? "در حال ارسال..." : "ارسال درخواست"}
+              {isSubmitting ? "در حال ارسال..." : "ثبت"}
             </button>
           </div>
         </form>
