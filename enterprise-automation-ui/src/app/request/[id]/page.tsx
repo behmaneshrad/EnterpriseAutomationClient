@@ -7,7 +7,7 @@ import WorkflowTimeline from "@/components/workflow/WorkflowTimeline";
 import ActionTimeline from "@/components/ActionTimeLine";
 import toast from "react-hot-toast";
 import { RequestDetails, WorkflowStep } from "@/types/workflow";
-import axiosInstance from "@/lib/api";
+import axiosInstance from "@/lib/axiosApi";
 
 const fetchRequestDetails = async (id: string) => {
   const response = await axiosInstance.get(`/api/requests/${id}`);
