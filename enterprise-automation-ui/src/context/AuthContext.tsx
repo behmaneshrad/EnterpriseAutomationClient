@@ -8,7 +8,6 @@ import {
   ReactNode,
 } from "react";
 import { useSession, signOut } from "next-auth/react";
-import type { Session } from "next-auth";
 
 // توکن ها
 interface AuthTokens {
@@ -36,17 +35,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  const [user, setUser] = useState<UserProfileType | null>(() => {
+  const [user, setUser] = useState<UserProfileType | null>(null);
+
+  useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
-      return storedUser ? JSON.parse(storedUser) : null;
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
     } catch (error) {
-      console.error("Failed to parse user from localstorage:", error)
-      return null;
+      console.error("Failed to parse user from localstorage:", error);
     }
-  })
-    
+  }, []);
 
+    
   useEffect(() => {
     console.log("Session object:", session);
     if (status === "authenticated" && session?.user) {
@@ -58,11 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
-    } else if (status === "unauthenticated") {
-      setUser(null);
-      localStorage.removeItem("user");
-    }
-  }, [status, session]);
+    } 
+  }, [status, session, user]);
 
   const tokens: AuthTokens | null =
     status === "authenticated"
