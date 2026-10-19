@@ -4,7 +4,7 @@ Next.js front end for the [EnterpriseAutomation API](https://github.com/behmanes
 
 **Stack:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · NextAuth v4 (Keycloak OIDC) · React Hook Form + Zod · Axios · react-hot-toast
 
-> **Status: working prototype.** The UI is in Persian (right-to-left, Yekan font). Some screens still use sample data and one module is missing from the repository — see [Known issues](#known-issues).
+> **Status: working prototype.** The UI is in Persian (right-to-left, Yekan font). Some screens still use sample data — see [Known issues](#known-issues). `yarn build` passes in CI.
 
 The application lives in [`enterprise-automation-ui/`](enterprise-automation-ui).
 
@@ -50,14 +50,14 @@ Prerequisites: Node.js 20+, Yarn 1.x, a running instance of the API and a Keyclo
    Scripts: `dev`, `build`, `start`, `lint`.
 
 ## Known issues
-- **Missing module:** `src/app/request/[id]/page.tsx`, `RequestFormEquipment.tsx` and `RequestFormLeave.tsx` import `@/lib/axiosApi`, which is not in the repository (only `src/lib/api.ts` is). Until it is added, `next build` fails on those files.
+- **Per-type form schemas** (`requestFormSchemaLeave`, `requestFormSchemaEquipment`) and the `@/lib/axiosApi` module were missing from the first push and were reconstructed from how the forms use them; check the validation rules against the API's DTOs.
 - **Sample data:** the request list page (`src/app/request/page.tsx`) shows hard-coded rows and has no status filter yet.
 - **Two API base-URL variables** (`NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_API_BASE_URL`) should be unified.
 - **Token storage:** the Axios interceptor reads tokens from `localStorage`; moving to the server-side session (or an httpOnly cookie) would be safer.
 - No automated tests yet.
 
 ## Roadmap
-- [ ] Add/unify the Axios client and make `yarn build` green; add a CI workflow (`yarn lint`, `yarn build`)
+- [ ] Unify the Axios client; add `yarn lint` to CI (it currently reports unused-variable warnings)
 - [ ] Replace the sample request list with the API, add status filters and pagination
 - [ ] Playwright test for the approval flow
 - [ ] i18n (Persian/English) and a typed API client generated from the OpenAPI spec
