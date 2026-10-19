@@ -45,3 +45,37 @@ export const requestFormSchema = z.object({
 
 
 export type RequestFormSchema = z.infer<typeof requestFormSchema>;
+
+// --- Per-type schemas used by RequestFormLeave / RequestFormEquipment ---
+// The file input is registered with react-hook-form, so it yields a FileList.
+const attachment = z
+    .custom<FileList>((v) => v == null || (typeof FileList !== "undefined" && v instanceof FileList))
+    .optional()
+    .refine((files) => !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE, {
+        message: "حجم فایل نباید بیشتر از 5 مگابایت باشد.",
+    })
+    .refine((files) => !files || files.length === 0 || ACCEDPTED_FILE_TYPES.includes(files[0].type), {
+        message: "فرمت فایل باید pdf یا تصویر (jpg, png) باشد.",
+    });
+
+export const requestFormSchemaLeave = z
+    .object({
+        startDate: z.string().nonempty("تاریخ شروع الزامی است"),
+        endDate: z.string().nonempty("تاریخ پایان الزامی است"),
+        description: z.string().max(500, { message: 'شرح نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.' }).optional(),
+        file: attachment,
+    })
+    .refine((d) => !d.startDate || !d.endDate || new Date(d.startDate) <= new Date(d.endDate), {
+        message: "تاریخ پایان باید بعد از تاریخ شروع باشد.",
+        path: ["endDate"],
+    });
+
+export const requestFormSchemaEquipment = z.object({
+    equipmentName: z.string().min(2, { message: "نام تجهیز الزامی است" }).max(100),
+    quantity: z.number({ message: "تعداد باید عدد باشد" }).int().min(1, { message: "حداقل تعداد ۱ است" }),
+    description: z.string().max(500, { message: 'شرح نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.' }).optional(),
+    file: attachment,
+});
+
+export type RequestFormLeaveSchema = z.infer<typeof requestFormSchemaLeave>;
+export type RequestFormEquipmentSchema = z.infer<typeof requestFormSchemaEquipment>;
